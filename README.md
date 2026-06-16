@@ -95,6 +95,10 @@ The SQLite database (`latin_trainer.db`) is created on first run. All Claude cal
 
 Flask · SQLite · Claude (Haiku 4.5) via REST. No JS framework.
 
+### License
+
+[MIT](LICENSE) — free to use, modify and distribute.
+
 ---
 
 ## Français
@@ -167,3 +171,7 @@ La base SQLite (`latin_trainer.db`) est créée au premier lancement. Tous les a
 ### Technique
 
 Flask · SQLite · Claude (Haiku 4.5) en REST. Aucun framework JS.
+
+### Licence
+
+[MIT](LICENSE) — libre d'utilisation, de modification et de redistribution.
