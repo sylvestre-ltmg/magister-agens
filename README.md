@@ -1,5 +1,7 @@
 # Magister Agens
 
+**Apprendre le latin avec l'IA** — analyse grammaticale guidée, corpus de vocabulaire et quiz. Application web gratuite et open-source. · *Learn Latin with AI.*
+
 > *Magister Agens* — "the agentic tutor" (*agens*, the Latin root of "agent"). A web app to learn Latin, powered by Claude.
 
 AI-guided grammatical analysis, vocabulary corpus, and varied quizzes — wrapped in an Ancient-Rome theme and usable on mobile.
