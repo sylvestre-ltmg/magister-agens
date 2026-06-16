@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magister Agens — Accueil</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #F5F0E8;
+      color: #2C2C2C;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: #2C2C2C;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    nav .brand { font-size: 1.25rem; font-weight: bold; color: #E9C46A; letter-spacing: 0.05em; text-decoration: none; }
+    nav a { color: #D0CCB8; text-decoration: none; font-size: 0.95rem; transition: color 0.15s; }
+    nav a:hover { color: #E9C46A; }
+    nav a.active { color: #fff; }
+
+    .container { max-width: 920px; margin: 2.5rem auto; padding: 0 1.5rem; }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+    .page-header h1 { font-size: 1.7rem; }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: inherit;
+      text-decoration: none;
+      transition: filter 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { filter: brightness(0.9); }
+    .btn-primary { background: #2D6A4F; color: #fff; }
+    .btn-secondary { background: #555; color: #fff; }
+    .btn-accent { background: #E9C46A; color: #2C2C2C; font-weight: bold; }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      margin-bottom: 1.5rem;
+    }
+    .card-body { padding: 1.5rem; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { border-bottom: 2px solid #E9C46A; }
+    th {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #666;
+      font-family: Arial, sans-serif;
+    }
+    td { padding: 0.85rem 1rem; border-bottom: 1px solid #F0EBE0; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #FDFAF5; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      background: #EEE;
+      color: #555;
+      font-family: Arial, sans-serif;
+    }
+
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .text-muted { color: #888; font-size: 0.85rem; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #888;
+    }
+    .empty-state h2 { font-size: 1.4rem; color: #666; margin-bottom: 0.5rem; }
+    .empty-state p { margin-bottom: 1.5rem; }
+
+    /* Quick links */
+    .quick-links { display: flex; gap: 1rem; margin-top: 1.2rem; flex-wrap: wrap; }
+
+    /* Alert */
+    .alert {
+      padding: 0.85rem 1.1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .alert-error { background: #FFF0F0; color: #C1121F; border-left: 3px solid #C1121F; }
+    .alert-info  { background: #FFF9E8; color: #7A5C00; border-left: 3px solid #E9C46A; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+    .modal h2 { margin-bottom: 1.4rem; font-size: 1.3rem; }
+
+    /* Form */
+    .form-group { margin-bottom: 1.1rem; }
+    label { display: block; margin-bottom: 0.35rem; font-size: 0.9rem; font-weight: bold; }
+    input[type=text], textarea, select, input[type=file] {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #CCC;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: #FAFAF8;
+    }
+    input[type=file] { padding: 0.4rem; }
+    textarea { resize: vertical; min-height: 140px; }
+
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid #DDD; }
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      padding: 0.5rem 0.9rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: -1px;
+    }
+    .tab-btn.active { border-bottom-color: #2D6A4F; color: #2D6A4F; font-weight: bold; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .modal-footer { display: flex; gap: 0.8rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+    .spinner { display: none; }
+    .spinner.active { display: inline; }
+  </style>
+  <link rel="stylesheet" href="/static/theme.css?v=2">
+  <script src="/static/usage.js?v=1"></script>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="brand">Magister Agens</a>
+  <a href="/" class="active">Accueil</a>
+  <a href="/corpus">Corpus</a>
+  <a href="/quiz">Quiz</a>
+  <span id="llm-counter" class="llm-counter" title="Consommation Claude">⚱ …</span>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Textes latins</h1>
+    <button class="btn btn-primary" onclick="ouvrirModal()">+ Ajouter un texte</button>
+  </div>
+
+  <div id="alert-zone"></div>
+
+  {% if textes %}
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Auteur</th>
+          <th>Ajouté le</th>
+          <th>Phrases</th>
+          <th>Mots</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in textes %}
+        <tr>
+          <td><strong>{{ t.titre }}</strong></td>
+          <td class="text-muted">{{ t.auteur or '—' }}</td>
+          <td class="text-muted">{{ t.date_ajout[:10] }}</td>
+          <td><span class="badge">{{ t.nb_phrases }}</span></td>
+          <td><span class="badge">{{ t.nb_mots }}</span></td>
+          <td>
+            <div class="actions">
+              <a href="/trainer/{{ t.id }}" class="btn btn-primary" style="padding:0.35rem 0.8rem; font-size:0.85rem;">Analyser</a>
+              <a href="/quiz?texte_id={{ t.id }}" class="btn btn-accent" style="padding:0.35rem 0.8rem; font-size:0.85rem;">Quiz</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% else %}
+  <div class="card">
+    <div class="empty-state">
+      <h2>Aucun texte pour l'instant</h2>
+      <p>Ajoutez un texte latin pour commencer à vous entraîner.</p>
+      <button class="btn btn-primary" onclick="ouvrirModal()">+ Ajouter mon premier texte</button>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="quick-links">
+    <a href="/corpus" class="btn btn-secondary">Corpus global</a>
+    <a href="/quiz" class="btn btn-secondary">Historique quiz</a>
+  </div>
+</div>
+
+<!-- Modal ajout texte -->
+<div class="modal-overlay" id="modal-overlay" onclick="fermerSiExterieur(event)">
+  <div class="modal">
+    <h2>Ajouter un texte latin</h2>
+    <div id="modal-alert"></div>
+
+    <div class="form-group">
+      <label for="titre">Titre <span style="color:#C1121F">*</span></label>
+      <input type="text" id="titre" placeholder="ex : De Bello Gallico, Livre I">
+    </div>
+    <div class="form-group">
+      <label for="auteur">Auteur (optionnel)</label>
+      <input type="text" id="auteur" placeholder="ex : César">
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-coller-btn" onclick="switchTab('coller')">Coller du texte</button>
+      <button class="tab-btn" id="tab-fichier-btn" onclick="switchTab('fichier')">Importer un .txt</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-coller">
+      <div class="form-group">
+        <label for="contenu">Texte latin</label>
+        <textarea id="contenu" placeholder="Collez votre texte latin ici..."></textarea>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-fichier">
+      <div class="form-group">
+        <label for="fichier">Fichier .txt</label>
+        <input type="file" id="fichier" accept=".txt">
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fermerModal()">Annuler</button>
+      <button class="btn btn-primary" id="btn-submit" onclick="soumettre()">
+        Analyser avec l'IA <span class="spinner" id="spinner"> ⏳</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let tabActif = 'coller';
+
+  function ouvrirModal() {
+    document.getElementById('modal-overlay').classList.add('open');
+    document.getElementById('titre').focus();
+  }
+
+  function fermerModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.getElementById('modal-alert').innerHTML = '';
+  }
+
+  function fermerSiExterieur(e) {
+    if (e.target === document.getElementById('modal-overlay')) fermerModal();
+  }
+
+  function switchTab(tab) {
+    tabActif = tab;
+    ['coller', 'fichier'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('tab-' + t + '-btn').classList.toggle('active', t === tab);
+    });
+  }
+
+  function afficherAlerte(msg, type = 'error') {
+    document.getElementById('modal-alert').innerHTML =
+      `<div class="alert alert-${type}">${msg}</div>`;
+  }
+
+  async function soumettre() {
+    const titre = document.getElementById('titre').value.trim();
+    if (!titre) { afficherAlerte('Le titre est requis.'); return; }
+
+    const fd = new FormData();
+    fd.append('titre', titre);
+    fd.append('auteur', document.getElementById('auteur').value.trim());
+
+    if (tabActif === 'fichier') {
+      const f = document.getElementById('fichier').files[0];
+      if (!f) { afficherAlerte('Sélectionnez un fichier .txt.'); return; }
+      fd.append('fichier', f);
+    } else {
+      const contenu = document.getElementById('contenu').value.trim();
+      if (!contenu) { afficherAlerte('Le texte est vide.'); return; }
+      fd.append('contenu', contenu);
+    }
+
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    document.getElementById('spinner').classList.add('active');
+    afficherAlerte('Analyse en cours avec l\'IA — cela peut prendre quelques secondes…', 'info');
+
+    try {
+      const res = await fetch('/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = data.redirect;
+      } else {
+        afficherAlerte(data.error || 'Erreur inconnue.');
+        btn.disabled = false;
+        document.getElementById('spinner').classList.remove('active');
+      }
+    } catch {
+      afficherAlerte('Erreur réseau. Vérifiez votre connexion.');
+      btn.disabled = false;
+      document.getElementById('spinner').classList.remove('active');
+    }
+  }
+
+  // Fermer modal avec Échap
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') fermerModal();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magister Agens — Corpus</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #F5F0E8;
+      color: #2C2C2C;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: #2C2C2C;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    nav .brand { font-size: 1.25rem; font-weight: bold; color: #E9C46A; text-decoration: none; }
+    nav a { color: #D0CCB8; text-decoration: none; font-size: 0.95rem; transition: color 0.15s; }
+    nav a:hover { color: #E9C46A; }
+    nav a.active { color: #fff; }
+
+    .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; flex-wrap: wrap; gap: 1rem; }
+    .page-header h1 { font-size: 1.7rem; }
+
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1.1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-family: inherit;
+      text-decoration: none;
+      transition: filter 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { filter: brightness(0.9); }
+    .btn-primary   { background: #2D6A4F; color: #fff; }
+    .btn-secondary { background: #555; color: #fff; }
+    .btn-danger    { background: #C1121F; color: #fff; }
+    .btn-accent    { background: #E9C46A; color: #2C2C2C; }
+    .btn-outline   { background: transparent; border: 1px solid #999; color: #555; }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      margin-bottom: 1.5rem;
+    }
+    .card-header {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid #F0EBE0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .card-header h2 { font-size: 1rem; }
+    .card-body { padding: 1.5rem; }
+
+    /* Textes liste */
+    .texte-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1.5rem;
+      border-bottom: 1px solid #F0EBE0;
+      gap: 1rem;
+      flex-wrap: wrap;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .texte-item:last-child { border-bottom: none; }
+    .texte-item:hover { background: #FDFAF5; }
+    .texte-item.selected { background: #E8F5EF; }
+    .texte-info h3 { font-size: 0.95rem; }
+    .texte-info small { color: #888; font-size: 0.82rem; font-family: Arial, sans-serif; }
+    .texte-actions { display: flex; gap: 0.5rem; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      background: #EEE;
+      color: #555;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Filtres */
+    .filtres {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #F0EBE0;
+      background: #FAFAF8;
+    }
+    select, input[type=text] {
+      padding: 0.45rem 0.7rem;
+      border: 1px solid #CCC;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      background: #fff;
+    }
+    label { font-size: 0.85rem; color: #555; }
+
+    /* Table mots */
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    thead tr { border-bottom: 2px solid #E9C46A; }
+    th {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #666;
+      font-family: Arial, sans-serif;
+    }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #F5F0E8; font-size: 0.9rem; }
+    tbody tr:hover td { background: #FDFAF5; }
+    tbody tr:last-child td { border-bottom: none; }
+    td.forme { font-style: italic; font-weight: bold; }
+    td.traduction { color: #2D6A4F; }
+
+    .pill {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-family: Arial, sans-serif;
+    }
+    .pill-nom       { background: #E3F2FD; color: #1565C0; }
+    .pill-verbe     { background: #F3E5F5; color: #6A1B9A; }
+    .pill-adjectif  { background: #E8F5E9; color: #2E7D32; }
+    .pill-prep      { background: #FFF9E8; color: #7A5C00; }
+    .pill-adverbe   { background: #FBE9E7; color: #BF360C; }
+    .pill-pronom    { background: #F1F8E9; color: #33691E; }
+    .pill-default   { background: #EEE;    color: #555; }
+
+    .empty-state { text-align: center; padding: 3rem; color: #888; }
+    .empty-state p { margin-bottom: 0.5rem; }
+
+    #nb-resultats { font-size: 0.85rem; color: #888; font-family: Arial, sans-serif; }
+
+    /* Modal historique */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 520px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+    .modal h2 { margin-bottom: 1.2rem; }
+    .hist-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #F0EBE0;
+      font-size: 0.9rem;
+    }
+    .hist-row:last-child { border-bottom: none; }
+
+    /* Confirmation suppression */
+    .confirm-dialog {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirm-dialog.open { display: flex; }
+    .confirm-box {
+      background: #fff;
+      border-radius: 8px;
+      padding: 2rem;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+    .confirm-box h3 { margin-bottom: 1rem; }
+    .confirm-box p  { margin-bottom: 1.5rem; color: #555; font-size: 0.95rem; }
+    .confirm-box .btn-row { display: flex; gap: 0.8rem; justify-content: center; }
+  </style>
+  <link rel="stylesheet" href="/static/theme.css?v=2">
+  <script src="/static/usage.js?v=1"></script>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="brand">Magister Agens</a>
+  <a href="/">Accueil</a>
+  <a href="/corpus" class="active">Corpus</a>
+  <a href="/quiz">Quiz</a>
+  <span id="llm-counter" class="llm-counter" title="Consommation Claude">⚱ …</span>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Corpus de vocabulaire</h1>
+    <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+      <button class="btn btn-outline" onclick="ouvrirHistorique()">Historique quiz</button>
+      <button class="btn btn-primary" onclick="exporterCSV()">Exporter CSV</button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start;">
+
+    <!-- Colonne gauche : liste des textes -->
+    <div>
+      <div class="card">
+        <div class="card-header"><h2>Textes</h2></div>
+
+        <div
+          class="texte-item{% if not request.args.get('texte_id') %} selected{% endif %}"
+          onclick="filtrerTexte(null)"
+          id="texte-all"
+        >
+          <div class="texte-info">
+            <h3>Tous les textes</h3>
+            <small>Corpus complet</small>
+          </div>
+        </div>
+
+        {% for t in textes %}
+        <div
+          class="texte-item"
+          onclick="filtrerTexte({{ t.id }})"
+          id="texte-{{ t.id }}"
+        >
+          <div class="texte-info">
+            <h3>{{ t.titre }}</h3>
+            <small>
+              {{ t.auteur or 'Auteur inconnu' }} ·
+              <span class="badge">{{ t.nb_mots }} mots</span>
+            </small>
+          </div>
+          <div class="texte-actions" onclick="event.stopPropagation()">
+            <button class="btn btn-danger" style="padding:0.25rem 0.6rem; font-size:0.8rem;"
+              onclick="demanderSuppression({{ t.id }}, {{ t.titre | tojson }})">✕</button>
+          </div>
+        </div>
+        {% endfor %}
+
+        {% if not textes %}
+        <div class="empty-state" style="padding:1.5rem;">
+          <p>Aucun texte. <a href="/" style="color:#2D6A4F;">Ajoutez-en un.</a></p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Colonne droite : mots -->
+    <div>
+      <div class="card">
+        <div class="filtres">
+          <label>Catégorie :
+            <select id="filtre-categorie" onchange="chargerMots()">
+              <option value="">Toutes</option>
+              <option value="nom">Nom</option>
+              <option value="verbe">Verbe</option>
+              <option value="adjectif">Adjectif</option>
+              <option value="préposition">Préposition</option>
+              <option value="adverbe">Adverbe</option>
+              <option value="pronom">Pronom</option>
+            </select>
+          </label>
+          <span id="nb-resultats">—</span>
+          <div style="margin-left:auto;">
+            <button class="btn btn-accent" style="padding:0.35rem 0.9rem;" onclick="exporterCSV()">
+              Exporter CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Forme</th>
+                <th>Lemme</th>
+                <th>Catégorie</th>
+                <th>Cas / Temps</th>
+                <th>Mode / Nombre</th>
+                <th>Traduction</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="mots-tbody">
+              <tr><td colspan="7" style="text-align:center; padding:2rem; color:#888;">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal historique quiz -->
+<div class="modal-overlay" id="modal-hist" onclick="fermerHistorique(event)">
+  <div class="modal">
+    <h2>Historique des quiz</h2>
+    <div id="hist-content"><p style="color:#888;">Chargement…</p></div>
+    <div style="margin-top:1.2rem; text-align:right;">
+      <button class="btn btn-secondary" onclick="fermerHistoriqueBtn()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Boîte de confirmation suppression -->
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <h3>Supprimer ce texte ?</h3>
+    <p id="confirm-msg"></p>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="annulerSuppression()">Annuler</button>
+      <button class="btn btn-danger" id="btn-confirmer-suppr" onclick="confirmerSuppression()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let texteIdCourant  = null;
+  let texteASupprimer = null;
+
+  // ── Chargement des mots ──────────────────────────────────────────────────
+  async function chargerMots() {
+    const cat = document.getElementById('filtre-categorie').value;
+    const params = new URLSearchParams();
+    if (texteIdCourant) params.set('texte_id', texteIdCourant);
+    if (cat)            params.set('categorie', cat);
+
+    const res  = await fetch('/corpus/mots?' + params);
+    const mots = await res.json();
+
+    document.getElementById('nb-resultats').textContent =
+      mots.length + ' mot' + (mots.length > 1 ? 's' : '');
+
+    const tbody = document.getElementById('mots-tbody');
+    if (!mots.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2.5rem;color:#888;">Aucun mot trouvé.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = mots.map(m => `
+      <tr>
+        <td class="forme">${esc(m.forme)}</td>
+        <td style="color:#555; font-style:italic;">${esc(m.lemme || '—')}</td>
+        <td>${pillCategorie(m.categorie)}</td>
+        <td style="font-size:0.82rem; color:#666; font-family:Arial,sans-serif;">
+          ${[m.cas, m.temps].filter(Boolean).join(' / ') || '—'}
+        </td>
+        <td style="font-size:0.82rem; color:#666; font-family:Arial,sans-serif;">
+          ${[m.mode, m.nombre].filter(Boolean).join(' / ') || '—'}
+        </td>
+        <td class="traduction">${esc(m.traduction_fr || '—')}</td>
+        <td style="font-size:0.8rem; color:#999;">${esc(m.texte_titre || '—')}</td>
+      </tr>
+    `).join('');
+  }
+
+  function pillCategorie(cat) {
+    if (!cat) return '<span class="pill pill-default">—</span>';
+    const cls = {
+      'nom':        'pill-nom',
+      'verbe':      'pill-verbe',
+      'adjectif':   'pill-adjectif',
+      'préposition':'pill-prep',
+      'adverbe':    'pill-adverbe',
+      'pronom':     'pill-pronom',
+    }[cat] || 'pill-default';
+    return `<span class="pill ${cls}">${esc(cat)}</span>`;
+  }
+
+  // ── Filtre par texte ─────────────────────────────────────────────────────
+  function filtrerTexte(id) {
+    texteIdCourant = id;
+
+    document.querySelectorAll('.texte-item').forEach(el => el.classList.remove('selected'));
+    const el = id ? document.getElementById('texte-' + id) : document.getElementById('texte-all');
+    if (el) el.classList.add('selected');
+
+    chargerMots();
+  }
+
+  // ── Export CSV ───────────────────────────────────────────────────────────
+  function exporterCSV() {
+    const cat = document.getElementById('filtre-categorie').value;
+    const params = new URLSearchParams();
+    if (texteIdCourant) params.set('texte_id', texteIdCourant);
+    if (cat)            params.set('categorie', cat);
+    window.location.href = '/corpus/export?' + params;
+  }
+
+  // ── Suppression ──────────────────────────────────────────────────────────
+  function demanderSuppression(id, titre) {
+    texteASupprimer = id;
+    document.getElementById('confirm-msg').textContent =
+      `Cette action supprimera le texte « ${titre} » et tous ses mots et phrases associés. Irréversible.`;
+    document.getElementById('confirm-dialog').classList.add('open');
+  }
+
+  function annulerSuppression() {
+    texteASupprimer = null;
+    document.getElementById('confirm-dialog').classList.remove('open');
+  }
+
+  async function confirmerSuppression() {
+    if (!texteASupprimer) return;
+    const btn = document.getElementById('btn-confirmer-suppr');
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    try {
+      const res = await fetch(`/corpus/${texteASupprimer}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert('Erreur : ' + (data.error || 'inconnue'));
+        btn.disabled = false;
+        btn.textContent = 'Supprimer';
+      }
+    } catch {
+      alert('Erreur réseau.');
+      btn.disabled = false;
+      btn.textContent = 'Supprimer';
+    }
+  }
+
+  // ── Historique quiz ──────────────────────────────────────────────────────
+  async function ouvrirHistorique() {
+    document.getElementById('modal-hist').classList.add('open');
+    const content = document.getElementById('hist-content');
+
+    try {
+      const res  = await fetch('/quiz/historique');
+      const data = await res.json();
+
+      if (!data.length) {
+        content.innerHTML = '<p style="color:#888;">Aucun quiz effectué pour l\'instant.</p>';
+        return;
+      }
+
+      const typeLabels = {
+        'latin_fr':      'Latin → Français',
+        'fr_latin':      'Français → Latin',
+        'forme_analyse': 'Forme → Analyse',
+        'lacunaire':     'Phrase lacunaire',
+      };
+
+      content.innerHTML = data.map(r => {
+        const pct = r.nb_questions > 0
+          ? Math.round((r.nb_correct / r.nb_questions) * 100) : 0;
+        const typeLabel = typeLabels[r.type_quiz] || r.type_quiz;
+        return `
+          <div class="hist-row">
+            <div>
+              <span style="font-size:0.85rem; color:#888;">${r.jour}</span><br>
+              <span style="font-size:0.9rem;">${typeLabel}</span>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-weight:bold; color:${pct >= 70 ? '#2D6A4F' : '#C1121F'};">${pct}%</span><br>
+              <span style="font-size:0.82rem; color:#888;">${r.nb_correct}/${r.nb_questions}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch {
+      content.innerHTML = '<p style="color:#C1121F;">Erreur de chargement.</p>';
+    }
+  }
+
+  function fermerHistorique(e) {
+    if (e.target === document.getElementById('modal-hist')) fermerHistoriqueBtn();
+  }
+
+  function fermerHistoriqueBtn() {
+    document.getElementById('modal-hist').classList.remove('open');
+  }
+
+  // ── Utilitaire ───────────────────────────────────────────────────────────
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  chargerMots();
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      annulerSuppression();
+      fermerHistoriqueBtn();
+    }
+  });
+</script>
+
+</body>
+</html>

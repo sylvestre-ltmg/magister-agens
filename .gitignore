@@ -1,0 +1,17 @@
+# Environnement & secrets
+.env
+*.b64
+*.bak
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Données locales (régénérées au démarrage)
+*.db
+usage.json
+
+# Divers
+.DS_Store

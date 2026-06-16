@@ -1,0 +1,204 @@
+/* ============================================================
+   Latin Trainer — thème « Roma Antiqua »
+   Feuille commune liée après le <style> de chaque page :
+   l'ordre source lui donne la priorité (specificité égale).
+   ============================================================ */
+
+:root {
+  --parchemin:      #F4ECD8;   /* parchemin clair */
+  --parchemin-2:    #EFE4C9;   /* parchemin ombré */
+  --marbre:         #FBF7EE;   /* marbre / blanc cassé */
+  --encre:          #2A211B;   /* encre brun-noir */
+  --encre-2:        #4A3C30;
+  --pourpre:        #8C2A1E;   /* rouge pompéien */
+  --pourpre-fonce:  #6E1F16;
+  --or:             #C8A24B;   /* or impérial */
+  --or-clair:       #E3C572;
+  --laurier:        #4F6F52;   /* vert laurier */
+  --laurier-fonce:  #3C5740;
+  --bordure:        #D8C9A3;   /* contour parchemin */
+}
+
+/* ---- Polices (dégradation propre vers serif système) ---- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cinzel+Decorative:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+body {
+  font-family: 'EB Garamond', Georgia, 'Times New Roman', serif !important;
+  color: var(--encre) !important;
+  /* fond parchemin + voile « marbre » subtil */
+  background-color: var(--parchemin) !important;
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.55), transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(140,42,30,.05), transparent 45%),
+    repeating-linear-gradient(135deg, rgba(0,0,0,.012) 0 2px, transparent 2px 7px) !important;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* ---- Titres en capitales romaines ---- */
+h1, h2, h3, .page-header h1, nav .brand {
+  font-family: 'Cinzel', 'Trajan Pro', Georgia, serif !important;
+  letter-spacing: .04em;
+  color: var(--encre) !important;
+  font-weight: 600;
+}
+.page-header h1 {
+  position: relative;
+  padding-bottom: .5rem;
+}
+.page-header h1::after {           /* filet doré sous le titre */
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 64px; height: 3px;
+  background: linear-gradient(90deg, var(--or), transparent);
+  border-radius: 2px;
+}
+
+/* ============================  NAV  ============================ */
+nav {
+  background:
+    linear-gradient(180deg, #322820, #241d17) !important;
+  padding: .85rem 1.6rem !important;
+  border-bottom: 3px solid var(--or) !important;
+  /* frise « grecque » dorée sous la barre */
+  box-shadow: 0 3px 0 0 rgba(0,0,0,.15), inset 0 -7px 0 -4px rgba(200,162,75,.35);
+  flex-wrap: wrap;
+  gap: 1.1rem 1.6rem !important;
+}
+nav .brand {
+  font-family: 'Cinzel Decorative', 'Cinzel', Georgia, serif !important;
+  color: var(--or-clair) !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .12em !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.5);
+}
+nav .brand::before { content: "❦ "; color: var(--or); font-size: .9em; }
+nav a {
+  color: #E8DEC5 !important;
+  font-variant: small-caps;
+  letter-spacing: .05em;
+  font-size: 1.02rem !important;
+}
+nav a:hover { color: var(--or-clair) !important; }
+nav a.active { color: #fff !important; border-bottom: 2px solid var(--or); padding-bottom: 2px; }
+
+/* pastille de consommation Claude (haut droite) */
+.llm-counter {
+  margin-left: auto;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: .03em;
+  color: var(--or-clair);
+  background: rgba(0,0,0,.22);
+  border: 1px solid rgba(200,162,75,.45);
+  padding: .18rem .7rem;
+  border-radius: 999px;
+  font-size: .92rem;
+  white-space: nowrap;
+}
+
+/* ============================  BOUTONS  ============================ */
+.btn {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-variant: small-caps;
+  letter-spacing: .04em;
+  border-radius: 5px !important;
+  border: 1px solid rgba(0,0,0,.15) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 2px 4px rgba(0,0,0,.12);
+  transition: transform .08s, filter .15s;
+}
+.btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary  { background: linear-gradient(180deg, var(--laurier), var(--laurier-fonce)) !important; color: #FBF7EE !important; }
+.btn-secondary{ background: linear-gradient(180deg, #6b5b4a, #504335) !important; color: #FBF7EE !important; }
+.btn-accent   { background: linear-gradient(180deg, var(--or-clair), var(--or)) !important; color: #3A2C12 !important; text-shadow: 0 1px 0 rgba(255,255,255,.3); }
+
+/* ============================  CARTES  ============================ */
+.card {
+  background: var(--marbre) !important;
+  border: 1px solid var(--bordure) !important;
+  border-top: 3px solid var(--or) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 18px rgba(80,55,20,.10) !important;
+}
+
+/* ============================  TABLES  ============================ */
+thead tr { border-bottom: 2px solid var(--or) !important; }
+th {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-variant: small-caps;
+  letter-spacing: .05em;
+  color: var(--pourpre) !important;
+  text-transform: none !important;
+}
+td { border-bottom: 1px solid #EADFC5 !important; }
+tbody tr:hover td { background: #FBF3DE !important; }
+
+/* ============================  BADGES  ============================ */
+.badge {
+  background: #efe3c4 !important;
+  color: var(--encre-2) !important;
+  border: 1px solid var(--bordure);
+  font-family: 'EB Garamond', serif !important;
+}
+
+/* ============================  ALERTES  ============================ */
+.alert-error { background: #F7E6E2 !important; color: var(--pourpre-fonce) !important; border-left: 3px solid var(--pourpre) !important; }
+.alert-info  { background: #FBF1D6 !important; color: #6b5212 !important; border-left: 3px solid var(--or) !important; }
+
+/* ============================  FORMULAIRES  ============================ */
+input[type=text], textarea, select, input[type=file] {
+  background: #FFFDF7 !important;
+  border: 1px solid var(--bordure) !important;
+  border-radius: 5px !important;
+  font-family: 'EB Garamond', Georgia, serif !important;
+  font-size: 1rem !important;
+}
+input[type=text]:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--or) !important;
+  box-shadow: 0 0 0 3px rgba(200,162,75,.2);
+}
+label { font-family: 'Cinzel', Georgia, serif !important; font-weight: 500 !important; font-size: .92rem !important; }
+
+/* onglets / tabs */
+.tab-btn.active { border-bottom-color: var(--pourpre) !important; color: var(--pourpre) !important; }
+
+/* modal */
+.modal {
+  background: var(--marbre) !important;
+  border: 1px solid var(--bordure) !important;
+  border-top: 4px solid var(--or) !important;
+}
+.modal h2 { color: var(--pourpre) !important; }
+
+/* ============================================================
+   RESPONSIVE — confort smartphone
+   ============================================================ */
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+
+  nav { padding: .7rem 1rem !important; gap: .5rem 1rem !important; }
+  nav .brand { font-size: 1.1rem !important; letter-spacing: .08em !important; flex-basis: 100%; }
+
+  .container { margin: 1.3rem auto !important; padding: 0 .9rem !important; }
+
+  .page-header { flex-direction: column; align-items: flex-start !important; gap: .9rem; }
+  .page-header h1 { font-size: 1.4rem !important; }
+  .page-header .btn { width: 100%; text-align: center; }
+
+  .card-body { padding: 1.1rem !important; }
+
+  /* tables larges : défilement horizontal plutôt que débordement */
+  .card { overflow-x: auto; }
+  th, td { padding: .6rem .6rem !important; font-size: .92rem; }
+
+  .quick-links { flex-direction: column; }
+  .quick-links .btn { width: 100%; text-align: center; }
+
+  .modal { padding: 1.3rem !important; border-radius: 0 !important; max-height: 100vh; }
+  .modal-footer { flex-direction: column-reverse; }
+  .modal-footer .btn { width: 100%; }
+}

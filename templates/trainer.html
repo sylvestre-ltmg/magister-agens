@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magister Agens — {{ texte.titre }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #F5F0E8;
+      color: #2C2C2C;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: #2C2C2C;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    nav .brand { font-size: 1.25rem; font-weight: bold; color: #E9C46A; text-decoration: none; }
+    nav a { color: #D0CCB8; text-decoration: none; font-size: 0.95rem; transition: color 0.15s; }
+    nav a:hover { color: #E9C46A; }
+
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    /* ── Progression ── */
+    .progress-bar {
+      background: #2C2C2C;
+      color: #E9C46A;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.9rem;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-track {
+      flex: 1;
+      height: 4px;
+      background: #555;
+      border-radius: 2px;
+      margin: 0 1rem;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #E9C46A;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    /* ── Phrase latine ── */
+    .phrase-box {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .phrase-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.6rem;
+    }
+    .phrase-text {
+      font-size: 1.45rem;
+      font-style: italic;
+      color: #1A1A1A;
+      line-height: 1.5;
+    }
+
+    /* ── Étapes badges ── */
+    .etapes-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .etape-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-family: Arial, sans-serif;
+      transition: all 0.2s;
+    }
+    .etape-badge.pending {
+      background: #EEE;
+      color: #999;
+      border: 1px solid #DDD;
+    }
+    .etape-badge.active {
+      background: #2D6A4F;
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(45,106,79,0.35);
+    }
+    .etape-badge.done {
+      background: #D4EDDA;
+      color: #2D6A4F;
+      border: 1px solid #B8DBBF;
+    }
+    .etape-badge.abandoned {
+      background: #FFE8E8;
+      color: #C1121F;
+      border: 1px solid #F5BBBB;
+    }
+
+    /* ── Panneau de travail ── */
+    .work-panel {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .etape-title {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 1.2rem;
+      color: #2C2C2C;
+    }
+    .etape-num {
+      display: inline-block;
+      background: #2D6A4F;
+      color: #fff;
+      border-radius: 50%;
+      width: 1.6rem;
+      height: 1.6rem;
+      line-height: 1.6rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-family: Arial, sans-serif;
+      margin-right: 0.5rem;
+    }
+
+    textarea#reponse {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.8rem 1rem;
+      border: 1px solid #CCC;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 1rem;
+      resize: vertical;
+      background: #FAFAF8;
+      transition: border-color 0.2s;
+    }
+    textarea#reponse:focus { outline: none; border-color: #2D6A4F; }
+    textarea#reponse:disabled { background: #F3F3F3; color: #888; }
+
+    /* ── Boutons ── */
+    .btn-row { display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap; }
+    .btn {
+      padding: 0.55rem 1.3rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-block;
+      transition: filter 0.15s;
+    }
+    .btn:hover:not(:disabled) { filter: brightness(0.9); }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn-primary  { background: #2D6A4F; color: #fff; }
+    .btn-danger   { background: #C1121F; color: #fff; }
+    .btn-next     { background: #E9C46A; color: #2C2C2C; font-weight: bold; }
+    .btn-secondary { background: #555; color: #fff; }
+
+    /* ── Feedback ── */
+    #feedback-zone {
+      margin-top: 1rem;
+      padding: 0;
+      min-height: 0;
+      transition: all 0.2s;
+    }
+    .feedback-msg {
+      padding: 0.9rem 1.1rem;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .feedback-correct   { background: #E8F5E9; color: #1B5E20; border-left: 4px solid #2D6A4F; }
+    .feedback-hint      { background: #FFF9E8; color: #7A5C00; border-left: 4px solid #E9C46A; }
+    .feedback-abandon   { background: #FFF0F0; color: #7B0000; border-left: 4px solid #C1121F; }
+    .feedback-error     { background: #FFF0F0; color: #C1121F; border-left: 4px solid #C1121F; }
+
+    .reponse-complete {
+      margin-top: 0.5rem;
+      padding: 0.8rem 1rem;
+      background: #F8F5FF;
+      border-left: 4px solid #6A3FA5;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+    .reponse-complete strong { display: block; margin-bottom: 0.3rem; color: #6A3FA5; }
+
+    /* ── Récapitulatif phrase ── */
+    #recap-zone {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    #recap-zone h3 { margin-bottom: 1rem; font-size: 1.1rem; }
+    .recap-item {
+      border-bottom: 1px solid #F0EBE0;
+      padding: 0.8rem 0;
+    }
+    .recap-item:last-child { border-bottom: none; }
+    .recap-etape { font-size: 0.8rem; font-family: Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 0.3rem; }
+    .recap-statut { font-size: 0.85rem; font-weight: bold; }
+    .statut-ok  { color: #2D6A4F; }
+    .statut-nok { color: #C1121F; }
+
+    /* ── Fin de session ── */
+    #fin-session {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      display: none;
+    }
+    #fin-session h2 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+    #fin-session .score { font-size: 2.2rem; color: #2D6A4F; margin: 1rem 0; font-family: Arial, sans-serif; }
+    #fin-session .details { text-align: left; margin: 1.5rem 0; }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(245,240,232,0.75);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #2D6A4F;
+    }
+    .loading-overlay.active { display: flex; }
+  </style>
+  <link rel="stylesheet" href="/static/theme.css?v=2">
+  <script src="/static/usage.js?v=1"></script>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="brand">Magister Agens</a>
+  <a href="/">Accueil</a>
+  <a href="/corpus">Corpus</a>
+  <a href="/quiz">Quiz</a>
+  <span id="llm-counter" class="llm-counter" title="Consommation Claude">⚱ …</span>
+</nav>
+
+<!-- Barre de progression -->
+<div class="progress-bar">
+  <span id="progress-label">Chargement…</span>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <span style="font-size:0.85rem; color:#AAA;">{{ texte.titre }}{% if texte.auteur %} — {{ texte.auteur }}{% endif %}</span>
+</div>
+
+<div class="loading-overlay" id="loading-overlay">
+  <span>Consultation du professeur de latin… ⏳</span>
+</div>
+
+<div class="container">
+
+  <!-- Phrase affichée -->
+  <div class="phrase-box" id="phrase-box">
+    <div class="phrase-label">Phrase à analyser</div>
+    <div class="phrase-text" id="phrase-text"></div>
+  </div>
+
+  <!-- Badges étapes -->
+  <div class="etapes-row" id="etapes-row"></div>
+
+  <!-- Panneau de travail -->
+  <div class="work-panel" id="work-panel">
+    <div class="etape-title" id="etape-title"></div>
+    <textarea id="reponse" placeholder="Votre réponse…"></textarea>
+    <div id="feedback-zone"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-soumettre" onclick="soumettre()">Soumettre</button>
+      <button class="btn btn-danger" id="btn-abandonner" onclick="abandonner()">Abandonner cette étape</button>
+      <button class="btn btn-next" id="btn-etape-suivante" style="display:none" onclick="etapeSuivante()">Étape suivante →</button>
+      <button class="btn btn-next" id="btn-phrase-suivante" style="display:none" onclick="phraseSuivante()">Phrase suivante →</button>
+    </div>
+  </div>
+
+  <!-- Récapitulatif phrase -->
+  <div id="recap-zone">
+    <h3 id="recap-titre"></h3>
+    <div id="recap-items"></div>
+  </div>
+
+  <!-- Fin de session -->
+  <div id="fin-session">
+    <h2>Session terminée !</h2>
+    <div class="score" id="score-global"></div>
+    <div class="details" id="fin-details"></div>
+    <div class="btn-row" style="justify-content:center; margin-top:1.5rem;">
+      <button class="btn btn-primary" onclick="recommencer()">Recommencer</button>
+      <a href="/" class="btn btn-secondary">Retour à l'accueil</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Données injectées par Flask ──────────────────────────────────────────
+  const PHRASES  = {{ phrases | tojson }};
+  const ETAPES   = {{ etapes  | tojson }};
+  const NB_ETAPES = ETAPES.length;
+
+  const ETAPE_LABELS = ['Propositions', 'Verbes', 'Prépositions', 'Noms', 'Traduction', 'Mot à mot'];
+
+  // ── État courant ─────────────────────────────────────────────────────────
+  let phraseIndex   = 0;
+  let etapeIndex    = 0;
+  let tentatives    = 0;
+  let etapeComplete = false;
+
+  let resultatsPhrase = [];  // [{etape, reponse, correct, feedback, reponse_complete, abandonne}]
+  let tousResultats   = [];  // [{phrase, resultats}]
+
+  // ── Bootstrap ────────────────────────────────────────────────────────────
+  afficher();
+
+  // ── Affichage ────────────────────────────────────────────────────────────
+  function afficher() {
+    if (phraseIndex >= PHRASES.length) { afficherFinSession(); return; }
+
+    const phrase = PHRASES[phraseIndex];
+
+    // Phrase
+    document.getElementById('phrase-text').textContent = phrase.contenu;
+
+    // Barre de progression
+    const totalEtapes = PHRASES.length * NB_ETAPES;
+    const doneEtapes  = phraseIndex * NB_ETAPES + etapeIndex;
+    const pct = Math.round((doneEtapes / totalEtapes) * 100);
+    document.getElementById('progress-label').textContent =
+      `Phrase ${phraseIndex + 1}/${PHRASES.length} — Étape ${etapeIndex + 1}/${NB_ETAPES}`;
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    // Badges
+    const row = document.getElementById('etapes-row');
+    row.innerHTML = '';
+    ETAPES.forEach((_, i) => {
+      const badge = document.createElement('span');
+      const label = ETAPE_LABELS[i] || `Étape ${i+1}`;
+      const r = resultatsPhrase[i];
+      let cls = 'pending', icon = i + 1;
+      if (i === etapeIndex) {
+        cls = 'active'; icon = `<strong>${i+1}</strong>`;
+      } else if (r) {
+        cls = r.abandonne ? 'abandoned' : 'done';
+        icon = r.abandonne ? '✗' : '✓';
+      }
+      badge.className = 'etape-badge ' + cls;
+      badge.innerHTML = `<span>${icon}</span><span>${label}</span>`;
+      row.appendChild(badge);
+    });
+
+    // Titre étape
+    document.getElementById('etape-title').innerHTML =
+      `<span class="etape-num">${etapeIndex + 1}</span>${ETAPES[etapeIndex]}`;
+
+    // Zone réponse
+    const reponseEl = document.getElementById('reponse');
+    reponseEl.value = '';
+    reponseEl.disabled = etapeComplete;
+
+    // Feedback
+    document.getElementById('feedback-zone').innerHTML = '';
+
+    // Boutons
+    afficherBoutons();
+
+    // Récap (caché au début de chaque phrase)
+    document.getElementById('recap-zone').style.display = 'none';
+
+    if (!etapeComplete) reponseEl.focus();
+  }
+
+  function afficherBoutons() {
+    const derniere = etapeIndex === NB_ETAPES - 1;
+
+    toggle('btn-soumettre',      !etapeComplete);
+    toggle('btn-abandonner',     !etapeComplete);
+    toggle('btn-etape-suivante', etapeComplete && !derniere);
+    toggle('btn-phrase-suivante',etapeComplete && derniere);
+  }
+
+  function toggle(id, visible) {
+    document.getElementById(id).style.display = visible ? 'inline-block' : 'none';
+  }
+
+  // ── Actions utilisateur ──────────────────────────────────────────────────
+  async function soumettre() {
+    const reponse = document.getElementById('reponse').value.trim();
+    if (!reponse) return;
+
+    tentatives++;
+
+    const data = await appelEvaluate({
+      phrase:        PHRASES[phraseIndex].contenu,
+      etape_index:   etapeIndex,
+      reponse,
+      nb_tentatives: tentatives,
+    });
+
+    if (!data) return;
+
+    afficherFeedback(data, false);
+
+    if (data.correct || tentatives >= 3) {
+      enregistrerEtape(reponse, data, false);
+      marquerEtapeComplete();
+    }
+  }
+
+  async function abandonner() {
+    const reponse = document.getElementById('reponse').value.trim() || '(aucune réponse)';
+    tentatives = 3;
+
+    const data = await appelEvaluate({
+      phrase:        PHRASES[phraseIndex].contenu,
+      etape_index:   etapeIndex,
+      reponse,
+      nb_tentatives: 3,
+      abandon:       true,
+    });
+
+    if (!data) return;
+
+    afficherFeedback(data, true);
+    enregistrerEtape(reponse, data, true);
+    marquerEtapeComplete();
+  }
+
+  function marquerEtapeComplete() {
+    etapeComplete = true;
+    document.getElementById('reponse').disabled = true;
+    afficherBoutons();
+
+    if (etapeIndex === NB_ETAPES - 1) afficherRecap();
+  }
+
+  function etapeSuivante() {
+    etapeIndex++;
+    tentatives    = 0;
+    etapeComplete = false;
+    afficher();
+  }
+
+  function phraseSuivante() {
+    tousResultats.push({ phrase: PHRASES[phraseIndex], resultats: [...resultatsPhrase] });
+    phraseIndex++;
+    etapeIndex    = 0;
+    tentatives    = 0;
+    etapeComplete = false;
+    resultatsPhrase = [];
+
+    if (phraseIndex >= PHRASES.length) {
+      afficherFinSession();
+    } else {
+      afficher();
+    }
+  }
+
+  function recommencer() {
+    phraseIndex   = 0;
+    etapeIndex    = 0;
+    tentatives    = 0;
+    etapeComplete = false;
+    resultatsPhrase = [];
+    tousResultats   = [];
+
+    document.getElementById('fin-session').style.display = 'none';
+    document.getElementById('phrase-box').style.display  = '';
+    document.getElementById('etapes-row').style.display  = '';
+    document.getElementById('work-panel').style.display  = '';
+
+    afficher();
+  }
+
+  // ── Appel API ─────────────────────────────────────────────────────────────
+  async function appelEvaluate(payload) {
+    const overlay = document.getElementById('loading-overlay');
+    overlay.classList.add('active');
+
+    try {
+      const res = await fetch('/evaluate', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      const data = await res.json();
+      overlay.classList.remove('active');
+      if (data.error && !data.correct && data.reponse_complete === undefined) {
+        afficherFeedbackErreur(data.error);
+        return null;
+      }
+      return data;
+    } catch (e) {
+      overlay.classList.remove('active');
+      afficherFeedbackErreur('Erreur réseau — vérifiez votre connexion.');
+      return null;
+    }
+  }
+
+  // ── Affichage feedback ────────────────────────────────────────────────────
+  function afficherFeedback(data, estAbandon) {
+    const zone = document.getElementById('feedback-zone');
+    zone.innerHTML = '';
+
+    let cls = 'feedback-hint';
+    if (estAbandon) cls = 'feedback-abandon';
+    else if (data.correct) cls = 'feedback-correct';
+
+    const msg = document.createElement('div');
+    msg.className = 'feedback-msg ' + cls;
+    msg.textContent = data.feedback || '';
+    zone.appendChild(msg);
+
+    if (data.reponse_complete) {
+      const rc = document.createElement('div');
+      rc.className = 'reponse-complete';
+      rc.innerHTML = '<strong>Réponse complète :</strong>' + escHtml(data.reponse_complete);
+      zone.appendChild(rc);
+    }
+  }
+
+  function afficherFeedbackErreur(msg) {
+    const zone = document.getElementById('feedback-zone');
+    zone.innerHTML = `<div class="feedback-msg feedback-error">${escHtml(msg)}</div>`;
+  }
+
+  // ── Enregistrement local ──────────────────────────────────────────────────
+  function enregistrerEtape(reponse, data, abandonne) {
+    resultatsPhrase[etapeIndex] = {
+      etape: ETAPES[etapeIndex],
+      label: ETAPE_LABELS[etapeIndex],
+      reponse,
+      correct: !!data.correct,
+      feedback: data.feedback,
+      reponse_complete: data.reponse_complete,
+      abandonne,
+    };
+  }
+
+  // ── Récapitulatif phrase ──────────────────────────────────────────────────
+  function afficherRecap() {
+    const zone = document.getElementById('recap-zone');
+    zone.style.display = 'block';
+    document.getElementById('recap-titre').textContent =
+      `Récapitulatif — Phrase ${phraseIndex + 1}/${PHRASES.length}`;
+
+    const items = document.getElementById('recap-items');
+    items.innerHTML = '';
+
+    resultatsPhrase.forEach((r, i) => {
+      if (!r) return;
+      const div = document.createElement('div');
+      div.className = 'recap-item';
+      const statutTxt = r.abandonne ? '✗ Abandonné'
+                       : r.correct  ? '✓ Correct'
+                       : '✗ Incorrect (après 3 tentatives)';
+      const statutCls = r.correct ? 'statut-ok' : 'statut-nok';
+      div.innerHTML = `
+        <div class="recap-etape">${ETAPE_LABELS[i]}</div>
+        <div class="recap-statut ${statutCls}">${statutTxt}</div>
+        <div style="font-size:0.9rem; color:#555; margin-top:0.2rem;">
+          Réponse : ${escHtml(r.reponse)}
+        </div>
+        ${r.reponse_complete
+          ? `<div style="font-size:0.85rem; color:#6A3FA5; margin-top:0.2rem;">
+               Réponse correcte : ${escHtml(r.reponse_complete)}
+             </div>`
+          : ''}
+      `;
+      items.appendChild(div);
+    });
+  }
+
+  // ── Fin de session ────────────────────────────────────────────────────────
+  function afficherFinSession() {
+    document.getElementById('phrase-box').style.display  = 'none';
+    document.getElementById('etapes-row').style.display  = 'none';
+    document.getElementById('work-panel').style.display  = 'none';
+    document.getElementById('recap-zone').style.display  = 'none';
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = 'Session terminée !';
+
+    let total = 0, correct = 0;
+    const details = document.getElementById('fin-details');
+    details.innerHTML = '';
+
+    tousResultats.forEach(({ phrase, resultats }) => {
+      const div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:1rem; padding:1rem; background:#FAFAF8; border-radius:6px;';
+      const phraseCorrects = resultats.filter(r => r && r.correct).length;
+      const phraseTotal    = resultats.filter(r => r).length;
+      total += phraseTotal;
+      correct += phraseCorrects;
+      div.innerHTML = `
+        <div style="font-style:italic; font-size:0.95rem; color:#555; margin-bottom:0.4rem;">
+          « ${escHtml(phrase.contenu)} »
+        </div>
+        <div style="font-size:0.9rem; font-family:Arial,sans-serif;">
+          ${phraseCorrects}/${phraseTotal} étapes correctes
+        </div>
+      `;
+      details.appendChild(div);
+    });
+
+    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    document.getElementById('score-global').textContent = `${correct}/${total} — ${pct} %`;
+    document.getElementById('fin-session').style.display = 'block';
+  }
+
+  // ── Utilitaire ────────────────────────────────────────────────────────────
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  // Soumettre avec Entrée (Shift+Entrée pour nouvelle ligne)
+  document.getElementById('reponse').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && !etapeComplete) {
+      e.preventDefault();
+      soumettre();
+    }
+  });
+</script>
+
+</body>
+</html>
